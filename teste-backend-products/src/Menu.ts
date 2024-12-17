@@ -1,5 +1,6 @@
 import * as readline from "node:readline";
 import ProductService from "./services/ProductService";
+import ProductRepository from "./repositories/ProductRepository";
 
 class Menu {
   private service: ProductService;
@@ -16,7 +17,6 @@ class Menu {
   init() {
     this.showMenu();
     this.processOption();
-    console.log("Iniciando...");
   }
 
   private showMenu() {
@@ -27,8 +27,7 @@ class Menu {
 3. Buscar Produtos por Categoria
 4. Encontrar Produto Mais Caro
 5. Listar Produtos Abaixo do Estoque Mínimo
-6. Exibir Todo o Inventário
-7. Sair
+6. Sair
 `);
   }
 
@@ -50,11 +49,7 @@ class Menu {
         case "5":
           this.findAllProductsBellowMinimumStockCommand();
           break;
-        // case "6":
-        //   this.repository.exibirInventario();
-        //   this.init();
-        //   break;
-        case "7":
+        case "6":
           console.log("Saindo do sistema...");
           this.io.close();
           return;
@@ -70,17 +65,14 @@ class Menu {
       this.io.question("Categoria: ", (category) => {
         this.io.question("Preço: ", (price) => {
           this.io.question("Quantidade: ", (quantity) => {
-            try {
-              this.service.addProduct({
-                name,
-                category,
-                price: parseFloat(price),
-                quantity: parseInt(quantity),
-              });
-              console.log(`Produto ${name} adicionado ao inventário.`);
-            } catch (error) {
-              console.error(error.message);
-            }
+            const product = this.service.addProduct({
+              name,
+              category,
+              price: parseFloat(price),
+              quantity: parseInt(quantity),
+            });
+            console.log(`Produto ${product.name} adicionado ao inventário.`);
+
             this.init();
           });
         });
@@ -90,58 +82,41 @@ class Menu {
 
   removeProductCommand() {
     this.io.question("Nome do Produto a Remover: ", (name) => {
-      try {
-        this.service.removeProduct(name);
-        console.log(`Produto ${name} removido do inventário.`);
-      } catch (error) {
-        console.error(error.message);
-      } finally {
-        this.init();
-      }
+      this.service.removeProduct(name);
+      console.log(`Produto ${name} removido do inventário.`);
+
+      this.init();
     });
   }
 
   findProductsPerCategoryCommand() {
-    this.io.question("Categoria para Busca: ", (categoria) => {
-      const produtos = this.repository.buscarPorCategoria(categoria);
+    this.io.question("Categoria para Busca: ", (category) => {
+      const produtos = this.service.findProductsPerCatergory(category);
       console.log("Produtos na Categoria:");
-      produtos.forEach((produto) => {
-        console.log(`
-Nome: ${produto.nome}
-Categoria: ${produto.categoria}
-Preço: R$ ${produto.preco.toFixed(2)}
-Quantidade: ${produto.quantidade}
--------------------`);
+      produtos.forEach(([_, product]) => {
+        console.log(product.toString());
+        console.log("-----------------------------");
       });
       this.init();
     });
   }
 
   findMoreExpensiveProductCommand() {
-    try {
-      const produtoMaisCaro = this.repository.encontrarProdutoMaisCaro();
-      console.log(`Produto Mais Caro:
-Nome: ${produtoMaisCaro.nome}
-Preço: R$ ${produtoMaisCaro.preco.toFixed(2)}`);
-    } catch (error) {
-      console.error(error.message);
-    }
+    const product = this.service.findMoreExpensiveProduct();
+    console.log("Produto Mais Caro:");
+    console.log(`${product.name} | ${product.formatedPrice()}`);
     this.init();
   }
 
   findAllProductsBellowMinimumStockCommand() {
-    this.io.question("Estoque Mínimo: ", (estoqueMinimo) => {
-      const produtosBaixoEstoque = this.repository.produtosAbaixoEstoqueMinimo(
-        parseInt(estoqueMinimo),
+    this.io.question("Estoque Mínimo: ", (minimum) => {
+      const products = this.service.findAllProductsBellowMinimumStock(
+        parseInt(minimum),
       );
       console.log("Produtos Abaixo do Estoque Mínimo:");
-      produtosBaixoEstoque.forEach((produto) => {
-        console.log(`
-Nome: ${produto.nome}
-Categoria: ${produto.categoria}
-Preço: R$ ${produto.preco.toFixed(2)}
-Quantidade: ${produto.quantidade}
--------------------`);
+      products.forEach(([_, product]) => {
+        console.log(product.toString());
+        console.log("-----------------------------");
       });
       this.init();
     });

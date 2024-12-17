@@ -4,5 +4,5 @@ try {
   const menu = new Menu();
   menu.init();
 } catch (error) {
-  console.error(error?.message);
+  console.error((error as Error).message);
 }
