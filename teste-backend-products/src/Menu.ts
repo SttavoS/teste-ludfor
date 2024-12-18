@@ -100,10 +100,15 @@ class Menu {
   }
 
   findMoreExpensiveProductCommand() {
-    const product = this.service.findMoreExpensiveProduct();
-    console.log("Produto Mais Caro:");
-    console.log(`${product.name} | ${product.formatedPrice()}`);
-    this.init();
+    try {
+      const product = this.service.findMoreExpensiveProduct();
+      console.log("Produto Mais Caro:");
+      console.log(`${product.name} | ${product.formatedPrice()}`);
+    } catch (error) {
+      console.error((error as Error).message);
+    } finally {
+      this.init();
+    }
   }
 
   findAllProductsBellowMinimumStockCommand() {
