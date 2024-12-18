@@ -1,4 +1,3 @@
-import CreateProductDTO from "../dtos/CreateProductDTO";
 import Product from "../entities/Product";
 
 interface Inventory {
