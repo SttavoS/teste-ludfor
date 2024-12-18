@@ -14,7 +14,7 @@ class ProductService {
 
     if (product) {
       product.quantity = quantity;
-      return this.repository.incrementProduct(product);
+      return this.repository.updateProductQuantity(product);
     }
 
     const newProduct = new Product({ name, category, price, quantity });

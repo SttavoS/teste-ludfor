@@ -30,7 +30,7 @@ class ProductRepository {
     this.inventory[product.name] = product;
   }
 
-  incrementProduct(product: Product): Product {
+  updateProductQuantity(product: Product): Product {
     this.inventory[product.name].quantity = product.quantity;
 
     return this.inventory[product.name];
