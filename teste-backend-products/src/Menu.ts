@@ -21,6 +21,7 @@ class Menu {
   private showMenu() {
     console.log(`
 ==== SISTEMA DE GERENCIAMENTO DE INVENTÁRIO ====
+1. Adicionar Produto/Atualizar Quantidade Produto 
 2. Remover Produto
 3. Buscar Produtos por Categoria
 4. Encontrar Produto Mais Caro
