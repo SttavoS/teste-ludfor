@@ -1,6 +1,5 @@
 import * as readline from "node:readline";
 import ProductService from "./services/ProductService";
-import ProductRepository from "./repositories/ProductRepository";
 
 class Menu {
   private service: ProductService;
